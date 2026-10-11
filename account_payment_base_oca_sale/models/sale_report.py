@@ -14,7 +14,9 @@ class SaleReport(models.Model):
         readonly=True,
     )
 
-    def _select_additional_fields(self):
-        res = super()._select_additional_fields()
-        res["preferred_payment_method_line_id"] = "s.preferred_payment_method_line_id"
+    def _select_dict(self, table):
+        res = super()._select_dict(table)
+        res["preferred_payment_method_line_id"] = (
+            table.order_id.preferred_payment_method_line_id
+        )
         return res

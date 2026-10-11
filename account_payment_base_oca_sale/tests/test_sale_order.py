@@ -3,7 +3,7 @@
 
 from odoo.tests import Form
 
-from odoo.addons.base.tests.common import DISABLED_MAIL_CONTEXT
+from odoo.addons.base.tests.common import DISABLED_MAIL_CREATE_CONTEXT
 
 from .common import CommonTestCase
 
@@ -12,12 +12,12 @@ class TestSaleOrder(CommonTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.env = cls.env(context=dict(cls.env.context, **DISABLED_MAIL_CONTEXT))
+        cls.env = cls.env(context=dict(cls.env.context, **DISABLED_MAIL_CREATE_CONTEXT))
 
     def create_sale_order(self, payment_method_line=None):
         with Form(self.env["sale.order"]) as sale_form:
             sale_form.partner_id = self.base_partner
-            for _, p in self.products.items():
+            for p in self.products.values():
                 with sale_form.order_line.new() as order_line:
                     order_line.product_id = p
                     order_line.name = p.name
