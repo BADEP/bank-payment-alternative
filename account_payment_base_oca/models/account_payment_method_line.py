@@ -140,20 +140,22 @@ class AccountPaymentMethodLine(models.Model):
                         default_journal=line.journal_id.display_name,
                     )
                 )
-            if line.payment_method_id.bank_account_required:
-                if line.bank_account_link == "variable":
-                    for journal in line.variable_journal_ids:
-                        if not journal.bank_account_id:
-                            raise ValidationError(
-                                self.env._(
-                                    "On %(name)s, the Payment Method %(method)s is "
-                                    "configured with Bank Account Required but journal "
-                                    "%(journal)s is not linked to a bank account.",
-                                    name=line.display_name,
-                                    method=line.payment_method_id.display_name,
-                                    journal=journal.display_name,
-                                )
+            if (
+                line.payment_method_id.bank_account_required
+                and line.bank_account_link == "variable"
+            ):
+                for journal in line.variable_journal_ids:
+                    if not journal.bank_account_id:
+                        raise ValidationError(
+                            self.env._(
+                                "On %(name)s, the Payment Method %(method)s is "
+                                "configured with Bank Account Required but journal "
+                                "%(journal)s is not linked to a bank account.",
+                                name=line.display_name,
+                                method=line.payment_method_id.display_name,
+                                journal=journal.display_name,
                             )
+                        )
             if line.bank_account_link == "variable" and line.payment_account_id:
                 raise ValidationError(
                     self.env._(
@@ -206,6 +208,7 @@ class AccountPaymentMethodLine(models.Model):
                 line.display_name = f"{line.name} ({line.journal_id.name})"
             else:
                 line.display_name = f"{line.name}"
+        return None
 
     def write(self, vals):
         if vals.get("bank_account_link") == "variable":
