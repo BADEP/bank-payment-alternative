@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <!-- Copyright 2017 ACSONE SA/NV
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
@@ -18,13 +18,13 @@
             </t>
 
             <div class="page">
-                <div class="oe_structure" id="oe_structure_1" />
+                <div id="oe_structure_1" class="oe_structure" />
                 <t t-set="layout_document_title">
                     <span t-if="doc.payment_type == 'inbound'">Debit Order #</span>
                     <span t-else="">Payment Order #</span>
                     <span t-field="doc.name">PAY001</span>
                 </t>
-                <div class="row mb-4" id="informations_l1">
+                <div id="informations_l1" class="row mb-4">
                     <div class="col">
                         <strong>Payment Method</strong>
                         <p t-field="doc.payment_method_line_id" />
@@ -34,12 +34,12 @@
                         <p t-field="doc.company_partner_bank_id" />
                     </div>
                 </div>
-                <div class="row mb-4" id="informations_l2">
+                <div id="informations_l2" class="row mb-4">
                     <div class="col">
                         <strong>Execution</strong>
                         <p t-field="doc.date_prefered" />
                     </div>
-                    <div class="col" t-if="doc.description">
+                    <div t-if="doc.description" class="col">
                         <strong>Description</strong>
                         <p t-field="doc.description" />
                     </div>
@@ -73,7 +73,7 @@
                                 <span t-field="line.partner_bank_id" />
                             </td>
                             <td name="td_communication">
-                                <span t-esc="line.communication" />
+                                <span t-out="line.communication" />
                             </td>
                             <td class="text-center" name="td_date">
                                 <span t-field="line.date" />
