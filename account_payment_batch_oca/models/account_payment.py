@@ -71,7 +71,7 @@ class AccountPayment(models.Model):
                 "bank_account_number_scrambled": pay.partner_bank_id.with_context(
                     **account_number_scrambled_ctx
                 ).acc_number_scrambled,
-                "bank_account_number": pay.partner_bank_id.acc_number,
+                "bank_account_number": pay.partner_bank_id.account_number,
                 "lines": [],
             }
             if len(pay.payment_line_ids) > 1:

@@ -5,6 +5,7 @@
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl.html).
 
 import logging
+import typing
 from collections import defaultdict
 
 from markupsafe import Markup
@@ -19,7 +20,7 @@ logger = logging.getLogger(__name__)
 class AccountPaymentOrder(models.Model):
     _name = "account.payment.order"
     _description = "Payment/Debit Order"
-    _inherit = ["mail.thread", "mail.activity.mixin"]
+    _inherit: typing.ClassVar[list[str]] = ["mail.thread", "mail.activity.mixin"]
     _order = "id desc"
     _check_company_auto = True
 
@@ -157,7 +158,7 @@ class AccountPaymentOrder(models.Model):
     description = fields.Char()
     payment_file_id = fields.Many2one("ir.attachment", string="Payment File Attachment")
     payment_file_datas = fields.Binary(
-        related="payment_file_id.datas", string="Payment File"
+        related="payment_file_id.raw", string="Payment File"
     )
     payment_file_name = fields.Char(
         related="payment_file_id.name", string="Payment Filename"
@@ -260,16 +261,15 @@ class AccountPaymentOrder(models.Model):
     def _check_date_scheduled(self):
         today = fields.Date.context_today(self)
         for order in self:
-            if order.date_scheduled:
-                if order.date_scheduled < today:
-                    raise ValidationError(
-                        self.env._(
-                            "On payment/debit order %(porder)s, the payment "
-                            "execution date is in the past (%(exedate)s).",
-                            porder=order.name,
-                            exedate=format_date(self.env, order.date_scheduled),
-                        )
+            if order.date_scheduled and order.date_scheduled < today:
+                raise ValidationError(
+                    self.env._(
+                        "On payment/debit order %(porder)s, the payment "
+                        "execution date is in the past (%(exedate)s).",
+                        porder=order.name,
+                        exedate=format_date(self.env, order.date_scheduled),
                     )
+                )
 
     @api.depends("payment_line_ids", "payment_line_ids.amount_company_currency")
     def _compute_total(self):
@@ -296,24 +296,25 @@ class AccountPaymentOrder(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            order_model = self
             if "company_id" in vals:
-                self = self.with_company(vals["company_id"])
+                order_model = self.with_company(vals["company_id"])
             payment_method_line = False
             if vals.get("payment_method_line_id"):
-                payment_method_line = self.env["account.payment.method.line"].browse(
-                    vals["payment_method_line_id"]
-                )
-            if vals.get("name", self.env._("New")) == self.env._("New"):
+                payment_method_line = order_model.env[
+                    "account.payment.method.line"
+                ].browse(vals["payment_method_line_id"])
+            if vals.get("name", order_model.env._("New")) == order_model.env._("New"):
                 if payment_method_line and payment_method_line.specific_sequence_id:
                     vals["name"] = payment_method_line.specific_sequence_id.next_by_id()
                 elif payment_method_line.payment_method_id.payment_type == "inbound":
-                    vals["name"] = self.env["ir.sequence"].next_by_code(
+                    vals["name"] = order_model.env["ir.sequence"].next_by_code(
                         "account.payment.order.inbound"
-                    ) or self.env._("New")
+                    ) or order_model.env._("New")
                 else:
-                    vals["name"] = self.env["ir.sequence"].next_by_code(
+                    vals["name"] = order_model.env["ir.sequence"].next_by_code(
                         "account.payment.order"
-                    ) or self.env._("New")
+                    ) or order_model.env._("New")
         return super().create(vals_list)
 
     @api.depends("payment_method_line_id")
@@ -484,7 +485,7 @@ class AccountPaymentOrder(models.Model):
             "date_generated": fields.Date.context_today(self),
         }
         if payment_file_bytes and filename_ext:
-            filename = ".".join([self._prepare_filename(), filename_ext])
+            filename = f"{self._prepare_filename()}.{filename_ext}"
             attachment = self.env["ir.attachment"].create(
                 {
                     "name": filename,
@@ -566,7 +567,7 @@ class AccountPaymentOrder(models.Model):
                         logger.info(
                             "mail generated for partner %s", partner.display_name
                         )
-                    except Exception as e:
+                    except Exception as e:  # noqa: BLE001 - any mail failure must not block other notifs
                         logger.warning(
                             "Error in the generation of the payment notif mail "
                             "for partner %s: %s",
@@ -628,7 +629,7 @@ class AccountPaymentOrder(models.Model):
                     "view_mode": "form,list,kanban,activity",
                     "views": False,
                     "view_id": False,
-                    "res_id": list(move_ids)[0],
+                    "res_id": next(iter(move_ids)),
                 }
             )
         else:

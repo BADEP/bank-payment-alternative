@@ -73,18 +73,14 @@ class TestPaymentMode(TransactionCase):
         self.payment_method_line_c1.payment_method_id = self.manual_in
         self.assertTrue(
             all(
-                [
-                    journal.type == "sale"
-                    for journal in self.payment_method_line_c1.default_journal_ids
-                ]
+                journal.type == "sale"
+                for journal in self.payment_method_line_c1.default_journal_ids
             )
         )
         self.payment_method_line_c1.payment_method_id = self.manual_out
         self.assertTrue(
             all(
-                [
-                    journal.type == "purchase"
-                    for journal in self.payment_method_line_c1.default_journal_ids
-                ]
+                journal.type == "purchase"
+                for journal in self.payment_method_line_c1.default_journal_ids
             )
         )

@@ -91,7 +91,7 @@ class AccountPaymentLine(models.Model):
         check_company=True,
     )
     partner_bank_acc_type = fields.Selection(
-        related="partner_bank_id.acc_type", string="Bank Account Type"
+        related="partner_bank_id.account_type", string="Bank Account Type"
     )
     partner_bank_allow_out_payment = fields.Boolean(
         related="partner_bank_id.allow_out_payment", store=True
@@ -114,6 +114,10 @@ class AccountPaymentLine(models.Model):
         store=True,
         readonly=False,
         precompute=True,
+        # default needed in v20: when some sibling computed fields are passed
+        # in create() vals, the whole precompute is skipped and the NOT NULL
+        # constraint would reject the row before the post-create compute runs
+        default="free",
         selection=[("free", "Free"), ("structured", "Structured")],
         required=True,
     )

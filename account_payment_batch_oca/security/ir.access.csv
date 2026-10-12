@@ -1,0 +1,12 @@
+id,name,model_id,group_id/id,operation,domain
+access_account_payment_order,Full access on account.payment.order to Payment Manager,account.payment.order,account_payment_batch_oca.group_account_payment,crud,
+access_account_payment_order_read,Read access on account.payment.order to Auditor,account.payment.order,account.group_account_readonly,r,
+account_payment_order_company_rule,Payment order multi-company rule,account.payment.order,,crud,"[('company_id', 'in', company_ids)]"
+access_account_payment_line,Full access on account.payment.line to Payment Manager,account.payment.line,account_payment_batch_oca.group_account_payment,crud,
+access_account_payment_line_read,Read access on account.payment.line to Auditor,account.payment.line,account.group_account_readonly,r,
+account_payment_line_company_rule,Payment line multi-company rule,account.payment.line,,crud,"[('company_id', 'in', company_ids)]"
+access_account_payment_lot,Full access on account.payment.lot to Payment Manager,account.payment.lot,account_payment_batch_oca.group_account_payment,crud,
+access_account_payment_lot_read,Read access on account.payment.lot to Auditor,account.payment.lot,account.group_account_readonly,r,
+account_payment_lot_company_rule,Payment lot multi-company rule,account.payment.lot,,crud,"[('company_id', 'in', company_ids)]"
+access_bank_payment_line,Full access on account.payment to Payment Manager,account.payment,account_payment_batch_oca.group_account_payment,crud,
+access_account_payment_line_create,access_account_payment_line_create,account.payment.line.create,account_payment_batch_oca.group_account_payment,crud,

@@ -68,7 +68,7 @@ class AccountMove(models.Model):
         # Retrieve partial payments - e.g.: manual credit notes
         (
             invoice_partials,
-            exchange_diff_moves,
+            _exchange_diff_moves,
         ) = self._get_reconciled_invoices_partials()
         for (
             _x,

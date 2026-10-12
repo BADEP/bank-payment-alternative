@@ -3,27 +3,29 @@
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <template id="print_account_payment_order_document">
-        <t t-call="web.external_layout">
+        <t t-set="address">
+            <div t-if="doc.journal_id.bank_account_id">
+                <div t-field="doc.journal_id.bank_account_id.bank_name" />
+                <div t-field="doc.journal_id.bank_account_id.street" />
+                <div t-field="doc.journal_id.bank_account_id.street2" />
+                <div t-field="doc.journal_id.bank_account_id.zip" />
+                <div t-field="doc.journal_id.bank_account_id.city" />
+                <div t-field="doc.journal_id.bank_account_id.state_id.name" />
+                <div t-field="doc.journal_id.bank_account_id.country_id.name" />
+            </div>
+        </t>
+        <t t-set="layout_document_title">
+            <span t-if="doc.payment_type == 'inbound'">Debit Order #</span>
+            <span t-else="">Payment Order #</span>
+            <span t-field="doc.name">PAY001</span>
+        </t>
+        <t t-call="web.external_layout"
+            address="address"
+            layout_document_title="layout_document_title">
             <t t-set="doc" t-value="doc.with_context({'lang': user.lang})" />
-            <t t-set="address">
-                <div t-if="doc.journal_id.bank_id">
-                    <div t-field="doc.journal_id.bank_id.name" />
-                    <div t-field="doc.journal_id.bank_id.street" />
-                    <div t-field="doc.journal_id.bank_id.street2" />
-                    <div t-field="doc.journal_id.bank_id.zip" />
-                    <div t-field="doc.journal_id.bank_id.city" />
-                    <div t-field="doc.journal_id.bank_id.state.name" />
-                    <div t-field="doc.journal_id.bank_id.country.name" />
-                </div>
-            </t>
 
             <div class="page">
                 <div id="oe_structure_1" class="oe_structure" />
-                <t t-set="layout_document_title">
-                    <span t-if="doc.payment_type == 'inbound'">Debit Order #</span>
-                    <span t-else="">Payment Order #</span>
-                    <span t-field="doc.name">PAY001</span>
-                </t>
                 <div id="informations_l1" class="row mb-4">
                     <div class="col">
                         <strong>Payment Method</strong>

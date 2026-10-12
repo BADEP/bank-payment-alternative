@@ -3,9 +3,9 @@
 # Copyright 2019-2022 Tecnativa - Pedro M. Baeza
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-from datetime import date, timedelta
+from datetime import timedelta
 
-from odoo import Command
+from odoo import Command, fields
 from odoo.exceptions import UserError, ValidationError
 from odoo.fields import Domain
 from odoo.tests import tagged
@@ -108,7 +108,7 @@ class TestPaymentOrderInboundBase(AccountTestInvoicingCommon):
 class TestPaymentOrderInbound(TestPaymentOrderInboundBase):
     def test_constrains_date(self):
         with self.assertRaises(ValidationError):
-            self.inbound_order.date_scheduled = date.today() - timedelta(days=1)
+            self.inbound_order.date_scheduled = fields.Date.today() - timedelta(days=1)
 
     def test_invoice_communication_01(self):
         self.assertEqual(

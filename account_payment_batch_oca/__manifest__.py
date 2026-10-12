@@ -10,7 +10,7 @@
 {
     "name": "Account Payment Batch OCA",
     "summary": "Add payment orders and debit orders",
-    "version": "19.0.2.0.0",
+    "version": "20.0.1.0.0",
     "license": "AGPL-3",
     "author": "ACSONE SA/NV, "
     "Therp BV, "
@@ -21,15 +21,11 @@
     "website": "https://github.com/OCA/bank-payment-alternative",
     "development_status": "Mature",
     "category": "Banking addons",
-    "depends": [
-        "account_payment_base_oca",
-        "base_iban",
-    ],
+    "depends": ["account_payment_base_oca", "base"],
     "excludes": ["account_payment_order"],
     "data": [
         "views/account_payment_method.xml",
         "security/payment_security.xml",
-        "security/ir.model.access.csv",
         "data/mail_template.xml",
         "wizard/account_payment_line_create_view.xml",
         "views/account_payment_method_line.xml",
@@ -41,6 +37,7 @@
         "reports/account_payment_order.xml",
         "reports/ir_actions_report.xml",
         "data/payment_seq.xml",
+        'security/ir.access.csv',
     ],
     "installable": True,
 }
